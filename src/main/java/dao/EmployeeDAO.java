@@ -3,13 +3,17 @@ package dao;
 import model.Employee;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface EmployeeDAO {
 
-    void create(Employee employee);
-    Employee readById(int id);
+    Optional<Employee> create(Employee employee);
+    Optional<Employee> readById(int id);
+
+    Optional<Employee> readById(long id);
+
     List<Employee> readAll();
-    void updateById(int id);
-    void deleteById(int id);
+    Optional<Employee> updateById(int id);
+    Optional<Employee> deleteById(int id);
 }
 

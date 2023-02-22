@@ -8,8 +8,9 @@ public class Employee {
     private String surname;
     private String gender;
     private int age;
+    City city;
 
-    public Employee() {
+    public Employee(long id, String name, String surname, String gender, int age, City city) {
 
     }
 
@@ -59,6 +60,14 @@ public class Employee {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public City getCity() {
+        return city;
+    }
+
+    public void setCity(City city) {
+        this.city = city;
     }
 
     @Override

@@ -1,61 +1,64 @@
 package dao.impl;
 
+import dao.CityDao;
 import dao.EmployeeDAO;
 import gdbc.ConnectinManager;
+import model.City;
 import model.Employee;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.List;
+import java.util.Optional;
 
 public class EmployeeDaoImpl implements EmployeeDAO {
+    private static final String INSERT = "INSERT INTO employee (name, surname, gender, age, city_id) VALUES (?, ?, ?, ?, ?)";
+
+    private static final String FIND_LAST_EMPLOYEE = "SELECT * FROM employee ORDER BY id DESC LIMIT ";
+    private static final String FIND_BY_ID = "SELECT * FROM employee WHERE city_id = ?";
+    private final CityDao cityDao = new CityDaoImpl();
 
     @Override
-    public void create(Employee employee){
-        // Формируем запрос к базе с помощью PreparedStatement
-        try(PreparedStatement statement = ConnectinManager.getConnection().prepareStatement(
-                "INSERT INTO employee (name, surname, age) VALUES ((2), (3), (5))")) {
-            statement.setString(2, employee.getName());
-            statement.setString(3, employee.getSurname());
-            statement.setInt(5, employee.getAge());
+    public Optional<Employee> create(Employee employee) {
+        long cityId = 0;
+        if (employee.getCity() != null && cityDao.findById(employee.getCity().getCityId()).isPresent()) {
+            cityId = employee.getCity().getCityId();
+        }
 
-            statement.executeQuery();
+        try (Connection connection = ConnectinManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(INSERT)) {
+            preparedStatement.setString(2, employee.getName());
+            preparedStatement.setString(3, employee.getSurname());
+            preparedStatement.setString(4, employee.getGender());
+            preparedStatement.setInt(5, employee.getAge());
+            preparedStatement.setObject(5, cityId);
+            if (preparedStatement.executeUpdate() != 0) {
+                try (Statement findLastStatement = connection.createStatement();
+                     ResultSet resultSet = findLastStatement.executeQuery(FIND_LAST_EMPLOYEE)) {
+                    if (resultSet.next()) {
+                        return Optional.of(readEmployee(resultSet));
+                    }
+                }
+            }
+
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return Optional.empty();
     }
+
     @Override
-    public Employee readById(int id){
-        Employee employee = new Employee();
-        try (PreparedStatement statement = connection.prepareStatement(
-                "SELECT * FROM employee INNER JOIN surname ON book.author_id=author.author_id AND book_id=(?)")) {
-
-            // Подставляем значение вместо wildcard
-            statement.setInt(1, id);
-
-            // Делаем запрос к базе и результат кладем в ResultSet
-            ResultSet resultSet = statement.executeQuery();
-
-            // Методом next проверяем есть ли следующий элемент в resultSet
-            // и одновременно переходим к нему, если таковой есть
-            while(resultSet.next()) {
-
-                // С помощью методов getInt и getString получаем данные из resultSet
-                // и присваиваем их полим объекта
-                book.setId(Integer.parseInt(resultSet.getString("book_id")));
-                book.setTitle(resultSet.getString("title"));
-                book.setAuthor(new Author(resultSet.getInt("author_id"),
-                        resultSet.getString("name_author")));
-                book.setAmount(Integer.parseInt(resultSet.getString("amount")));
+    public Optional<Employee> readById(long id) {
+        try (Connection connection = ConnectinManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID)) {
+            preparedStatement.setLong(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()){
+                return Optional.of(readEmployee(resultSet));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
-        return book;
-
     }
 
     @Override
@@ -64,12 +67,28 @@ public class EmployeeDaoImpl implements EmployeeDAO {
     }
 
     @Override
-    public void updateById(int id) {
+    public Optional<Employee> updateById(int id) {
 
+        return null;
     }
 
     @Override
-    public void deleteById(int id) {
+    public Optional< Employee> deleteById(int id) {
+
+    }
+
+    private Employee readEmployee(ResultSet resultSet) throws SQLException {
+        Long cityId = resultSet.getObject("city_id", Long.class);
+        City city=null;
+        if (cityId!=null){
+            city=cityDao.findById(cityId).orElse(null);
+        }
+        return  new Employee(resultSet.getLong("id"),
+                resultSet.getString("name"),
+                resultSet.getString("surname"),
+                resultSet.getString("gender"),
+                resultSet.getInt("age"),
+                city);
 
     }
 }
