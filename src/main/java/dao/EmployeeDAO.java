@@ -12,7 +12,7 @@ public interface EmployeeDAO {
     Optional<Employee> readById(long id);
 
     List<Employee> readAll();
-    Optional<Employee> updateById(int id);
-    Optional<Employee> deleteById(int id);
+    Optional<Employee> updateById(Employee employee);
+    Optional<Employee> deleteById(Employee id);
 }
 

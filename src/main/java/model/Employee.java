@@ -3,7 +3,7 @@ package model;
 import java.util.Objects;
 
 public class Employee {
-    private int id;
+    private long id;
     private String name;
     private String surname;
     private String gender;
@@ -14,7 +14,7 @@ public class Employee {
 
     }
 
-    public Employee(int id, String name, String surname, String gender, int age) {
+    public Employee(long id, String name, String surname, String gender, int age) {
         this.id = id;
         this.name = name;
         this.surname = surname;
@@ -22,7 +22,7 @@ public class Employee {
         this.age = age;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
