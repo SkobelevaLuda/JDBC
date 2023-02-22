@@ -8,7 +8,6 @@ import java.util.Optional;
 public interface EmployeeDAO {
 
     Optional<Employee> create(Employee employee);
-    Optional<Employee> readById(int id);
 
     Optional<Employee> readById(long id);
 

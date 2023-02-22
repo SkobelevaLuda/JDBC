@@ -7,6 +7,7 @@ import model.City;
 import model.Employee;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,7 +15,9 @@ public class EmployeeDaoImpl implements EmployeeDAO {
     private static final String INSERT = "INSERT INTO employee (name, surname, gender, age, city_id) VALUES (?, ?, ?, ?, ?)";
 
     private static final String FIND_LAST_EMPLOYEE = "SELECT * FROM employee ORDER BY id DESC LIMIT ";
-    private static final String FIND_BY_ID = "SELECT * FROM employee WHERE city_id = ?";
+    private static final String FIND_BY_ID = "SELECT * FROM employee WHERE id = ?";
+    private static final String FIND_ALL = "SELECT * FROM employee WHERE id = ?";
+    private static final String UPDATE = "UPDATE employee SET name=?, surname = ?, ";
     private final CityDao cityDao = new CityDaoImpl();
 
     @Override
@@ -53,17 +56,28 @@ public class EmployeeDaoImpl implements EmployeeDAO {
              PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID)) {
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()){
+            if (resultSet.next()) {
                 return Optional.of(readEmployee(resultSet));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        return Optional.empty();
     }
 
     @Override
     public List<Employee> readAll() {
-        return null;
+        List<Employee> employees = new ArrayList<>();
+        try (Connection connection = ConnectinManager.getConnection();
+             Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(FIND_ALL)){
+            while (resultSet.next()) {
+                employees.add(readEmployee(resultSet));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return employees;
     }
 
     @Override
@@ -73,17 +87,17 @@ public class EmployeeDaoImpl implements EmployeeDAO {
     }
 
     @Override
-    public Optional< Employee> deleteById(int id) {
+    public Optional<Employee> deleteById(int id) {
 
     }
 
     private Employee readEmployee(ResultSet resultSet) throws SQLException {
         Long cityId = resultSet.getObject("city_id", Long.class);
-        City city=null;
-        if (cityId!=null){
-            city=cityDao.findById(cityId).orElse(null);
+        City city = null;
+        if (cityId != null) {
+            city = cityDao.findById(cityId).orElse(null);
         }
-        return  new Employee(resultSet.getLong("id"),
+        return new Employee(resultSet.getLong("id"),
                 resultSet.getString("name"),
                 resultSet.getString("surname"),
                 resultSet.getString("gender"),
