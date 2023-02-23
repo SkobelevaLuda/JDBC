@@ -14,7 +14,7 @@ import java.util.Optional;
 public class EmployeeDaoImpl implements EmployeeDAO {
     private static final String INSERT = "INSERT INTO employee (name, surname, gender, age, city_id) VALUES (?, ?, ?, ?, ?)";
 
-    private static final String FIND_LAST_EMPLOYEE = "SELECT * FROM employee ORDER BY id DESC LIMIT ";
+    private static final String FIND_LAST_EMPLOYEE = "SELECT * FROM employee ORDER BY id DESC LIMIT 10 ";
     private static final String FIND_BY_ID = "SELECT * FROM employee WHERE id = ? ";
     private static final String FIND_ALL = "SELECT * FROM employee WHERE id = ?";
     private static final String UPDATE = "UPDATE employee SET name=?, surname = ?, gender= ?, age = ?, city_id = ? WHERE id = ?";
@@ -43,7 +43,6 @@ public class EmployeeDaoImpl implements EmployeeDAO {
                     }
                 }
             }
-
 
         } catch (SQLException e) {
             e.printStackTrace();
