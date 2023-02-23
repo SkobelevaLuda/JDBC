@@ -14,8 +14,15 @@ public class Employee {
 
     }
 
-    public Employee(long id, String name, String surname, String gender, int age) {
-        this.id = id;
+    public Employee(String name, String surname, String gender, int age, City city) {
+        this.name = name;
+        this.surname = surname;
+        this.gender = gender;
+        this.age = age;
+        this.city = city;
+    }
+
+    public Employee(String name, String surname, String gender, int age) {
         this.name = name;
         this.surname = surname;
         this.gender = gender;
@@ -85,13 +92,7 @@ public class Employee {
 
     @Override
     public String toString() {
-        return "Employee{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", surname='" + surname + '\'' +
-                ", gender='" + gender + '\'' +
-                ", age=" + age +
-                '}';
+        return "Сотрудник" + id + " Имя " + name + " Фамилия " + surname + " пол" + gender + " Возраст " + age;
     }
 
 }

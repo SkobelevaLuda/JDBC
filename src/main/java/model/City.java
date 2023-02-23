@@ -6,7 +6,7 @@ public class City {
     private long cityId;
     private String cityName;
 
-    public City(){
+    public City() {
 
     }
 
@@ -46,9 +46,6 @@ public class City {
 
     @Override
     public String toString() {
-        return "City{" +
-                "city_id=" + cityId +
-                ", city_name='" + cityName + '\'' +
-                '}';
+        return "ID города" + cityId + " Город " + cityName;
     }
 }

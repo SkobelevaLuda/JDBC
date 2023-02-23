@@ -15,7 +15,7 @@ public class EmployeeDaoImpl implements EmployeeDAO {
     private static final String INSERT = "INSERT INTO employee (name, surname, gender, age, city_id) VALUES (?, ?, ?, ?, ?)";
 
     private static final String FIND_LAST_EMPLOYEE = "SELECT * FROM employee ORDER BY id DESC LIMIT ";
-    private static final String FIND_BY_ID = "SELECT * FROM employee WHERE id = ?";
+    private static final String FIND_BY_ID = "SELECT * FROM employee WHERE id = ? ";
     private static final String FIND_ALL = "SELECT * FROM employee WHERE id = ?";
     private static final String UPDATE = "UPDATE employee SET name=?, surname = ?, gender= ?, age = ?, city_id = ? WHERE id = ?";
     private static final String DELITE = "DELITE * FROM employee WHERE id = ?";
@@ -30,10 +30,10 @@ public class EmployeeDaoImpl implements EmployeeDAO {
 
         try (Connection connection = ConnectinManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(INSERT)) {
-            preparedStatement.setString(2, employee.getName());
-            preparedStatement.setString(3, employee.getSurname());
-            preparedStatement.setString(4, employee.getGender());
-            preparedStatement.setInt(5, employee.getAge());
+            preparedStatement.setString(1, employee.getName());
+            preparedStatement.setString(2, employee.getSurname());
+            preparedStatement.setString(3, employee.getGender());
+            preparedStatement.setInt(4, employee.getAge());
             preparedStatement.setObject(5, cityId);
             if (preparedStatement.executeUpdate() != 0) {
                 try (Statement findLastStatement = connection.createStatement();
@@ -106,8 +106,8 @@ public class EmployeeDaoImpl implements EmployeeDAO {
     }
 
     @Override
-    public Optional<Employee> deleteById(Employee id) {
-        Optional<Employee> optionalEmployee = create(id);
+    public Optional<Employee> deleteById(long id) {
+        Optional<Employee> optionalEmployee = readById(id);
         if (optionalEmployee.isPresent()) {
             try (Connection connection = ConnectinManager.getConnection();
                  PreparedStatement preparedStatement = connection.prepareStatement(DELITE)) {
@@ -124,18 +124,18 @@ public class EmployeeDaoImpl implements EmployeeDAO {
         return Optional.empty();
     }
 
-        private Employee readEmployee (ResultSet resultSet) throws SQLException {
-            Long cityId = resultSet.getObject("city_id", Long.class);
-            City city = null;
-            if (cityId != null) {
-                city = cityDao.findById(cityId).orElse(null);
-            }
-            return new Employee(resultSet.getLong("id"),
-                    resultSet.getString("name"),
-                    resultSet.getString("surname"),
-                    resultSet.getString("gender"),
-                    resultSet.getInt("age"),
-                    city);
-
+    private Employee readEmployee(ResultSet resultSet) throws SQLException {
+        Long cityId = resultSet.getObject("city_id", Long.class);
+        City city = null;
+        if (cityId != null) {
+            city = cityDao.findById(cityId).orElse(null);
         }
+        return new Employee(resultSet.getLong("id"),
+                resultSet.getString("name"),
+                resultSet.getString("surname"),
+                resultSet.getString("gender"),
+                resultSet.getInt("age"),
+                city);
+
     }
+}

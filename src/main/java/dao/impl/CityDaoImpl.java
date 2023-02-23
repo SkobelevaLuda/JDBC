@@ -20,7 +20,7 @@ public class CityDaoImpl implements CityDao {
              PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID)) {
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()){
+            if (resultSet.next()) {
                 return Optional.of(new City(resultSet.getLong("city_id"),
                         resultSet.getString("city_name")));
             } else {
