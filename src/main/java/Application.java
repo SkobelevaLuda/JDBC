@@ -13,8 +13,10 @@ public class Application {
         City podolsk = new City(7,"Подольск");
 
         employeeDAO.create(new Employee("Марфа", "Васильева", "жен", 50, kazan))
-                .ifPresent(employee -> System.out.println("Добавлен сотрудник"+employee));
-        Optional<Employee> employeeOptional=employeeDAO.create(new Employee("Иван", "Ванин", "муж", 40, podolsk));
+                .ifPresent(employee -> System.out.println("Добавлен сотрудник" +employee));
+        Optional<Employee> employeeOptional=employeeDAO.create(new Employee
+                ("Иван", "Ванин", "муж", 40, podolsk));
+      //  System.out.println(employeeDAO.create(new Employee("Марфа","Васильева", "жен",55)));
 
         System.out.println("Все сотрудники");
         employeeDAO.readAll().forEach(System.out::println);
